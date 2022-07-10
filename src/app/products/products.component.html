@@ -1,0 +1,192 @@
+<app-main-header></app-main-header>
+<app-main-sidebar></app-main-sidebar>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+            <h1 class="m-0">Products</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Products</li>
+            </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Products</h3>
+                            <div class="card-tools">
+                                <button class="btn btn-success" (click)="addAction()">Add</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body p-0">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th>Image</th>
+                                        <th>Product name</th>
+                                        <th>Price</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let res of data; let i = index;">
+                                        <td>{{i+1}}.</td>
+                                        <td *ngIf="res.image_url">
+                                            <img src="{{res.image_url}}" style="width:100px;" />
+                                        </td>
+                                        <td *ngIf="!res.image_url"></td>
+                                        <td>{{res.product_name}}</td>
+                                        <td>&#8377; {{res.price}}</td>
+                                        <td>{{res.description}}</td>
+                                        <td *ngIf="res.is_active"><span class="badge bg-success">Active</span></td>
+                                        <td *ngIf="!res.is_active"><span class="badge bg-danger">In-active</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-success" (click)="updateAction(res)">Edit</button>&nbsp;
+                                            <button type="button" class="btn btn-sm btn-danger" (click)="deleteData(res._id)">Delete</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+
+                    
+                    <div class="mb-3 mt-3">
+                        <div *ngIf="status == true" class="alert alert-success" role="alert">
+                            {{message}}
+                        </div>
+                        <div *ngIf="status == false" class="alert alert-danger" role="alert">
+                            {{message}}
+                        </div>
+                    </div>
+
+                    <div class="card" *ngIf="addflag">
+                        <div class="card-header">
+                            <h3 class="card-title"> Add Product</h3>
+                        </div>
+                        <form [formGroup]="dataRef1" (ngSubmit)="addData()">
+                            <div class="card-body">
+                                <div class="mb-3 form-group">
+                                    <label for="product_name">Product Name</label>
+                                    <input type="text" class="form-control" id="product_name" formControlName="product_name">
+                                </div>
+
+                                <div class="mb-3 form-group">
+                                    <label for="category_id">Categories</label>
+                                    <select class="form-control" id="category_id" formControlName="category_id">
+                                        <option *ngFor="let category of categories; index as i" [ngValue]="category._id">{{category.category_name}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3 form-group">
+                                            <label for="price">Product Price</label>
+                                            <input type="number" class="form-control" id="price" formControlName="price">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3 form-group">
+                                            <label for="image_url">Image URL</label>
+                                            <input type="text" class="form-control" id="image_url" formControlName="image_url">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 form-group">
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control" id="description" formControlName="description"></textarea>
+                                </div>
+
+                                <div class="mb-3 form-group">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+
+                    <div class="card" *ngIf="updateflag">
+                        <div class="card-header">
+                            <h3 class="card-title">Update Product</h3>
+                        </div>
+                        <form [formGroup]="dataRef2" (ngSubmit)="updateData()">
+                            <input type="hidden" [(ngModel)]="updatedata._id" formControlName="id" />
+                            <div class="card-body">
+                                <div class="mb-3 form-group">
+                                    <label for="pid">Product Name</label>
+                                    <input type="text" [(ngModel)]="updatedata.product_name" class="form-control" id="product_name" formControlName="product_name">
+                                </div>
+
+                                <div class="mb-3 form-group">
+                                    <label for="category_id">Categories</label>
+                                    <select class="form-control" id="category_id" [(ngModel)]="category_id" formControlName="category_id">
+                                        <option *ngFor="let category of categories; index as i" [ngValue]="category._id">{{category.category_name}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3 form-group">
+                                            <label for="price">Product Price</label>
+                                            <input type="number" class="form-control" [(ngModel)]="updatedata.price" id="price" formControlName="price">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3 form-group">
+                                            <label for="image_url">Image URL</label>
+                                            <input type="text" class="form-control" id="image_url" [(ngModel)]="updatedata.image_url" formControlName="image_url">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 form-group">
+                                    <label for="pid">Description</label>
+                                    <textarea class="form-control" id="description" [(ngModel)]="updatedata.description" formControlName="description"></textarea>
+                                </div>
+
+                                <div class="mb-3 form-group">
+                                    <label for="pid">Status</label>
+                                    <select class="form-control" id="is_active" [(ngModel)]="is_active" formControlName="is_active">
+                                        <option [ngValue]="1">Active</option>
+                                        <option [ngValue]="0">In-active</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3 form-group">
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+<app-control-sidebar></app-control-sidebar>
+<app-main-footer></app-main-footer>
